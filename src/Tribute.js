@@ -194,7 +194,6 @@ class Tribute {
         if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
           return
         }
-
         this.currentMentionTextSnapshot = this.current.mentionText
 
         // create the menu if it doesn't exist.
@@ -232,7 +231,6 @@ class Tribute {
             })
 
             this.current.filteredItems = items
-
             let ul = this.menu.querySelector('ul')
 
             this.range.positionMenuAtCaret(scrollTo)

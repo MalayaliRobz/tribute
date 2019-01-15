@@ -289,9 +289,9 @@ class TributeRange {
         }
 
         let effectiveRange = this.getTextPrecedingCurrentSelection()
-        let effectiveSplit = effectiveRange.split(' ');
-        let splitWorldsCount = effectiveSplit.length - 1;
-        let mentionText = effectiveSplit[splitWorldsCount].trim();
+        let wordsArray = effectiveRange.split(' ')
+        let worldsCount = wordsArray.length - 1
+        let mentionText = wordsArray[worldsCount].trim()
 
         if (isAutocomplete) {
             return {
