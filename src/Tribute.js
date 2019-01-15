@@ -10,6 +10,7 @@ class Tribute {
         iframe = null,
         selectClass = 'highlight',
         trigger = '@',
+        autoCompleteMode = false,
         selectTemplate = null,
         menuItemTemplate = null,
         lookup = 'key',
@@ -23,7 +24,7 @@ class Tribute {
         positionMenu = true,
         spaceSelectsMatch = false,
     }) {
-
+        this.autoCompleteMode = autoCompleteMode
         this.menuSelected = 0
         this.current = {}
         this.inputEvent = false
@@ -34,6 +35,10 @@ class Tribute {
         this.positionMenu = positionMenu
         this.hasTrailingSpace = false;
         this.spaceSelectsMatch = spaceSelectsMatch;
+
+        if (this.autoCompleteMode) {
+            trigger= ''
+        }
 
         if (values) {
             this.collection = [{
@@ -189,6 +194,7 @@ class Tribute {
         if (this.isActive && this.current.element === element && this.current.mentionText === this.currentMentionTextSnapshot) {
           return
         }
+
         this.currentMentionTextSnapshot = this.current.mentionText
 
         // create the menu if it doesn't exist.
@@ -226,7 +232,6 @@ class Tribute {
             })
 
             this.current.filteredItems = items
-
 
             let ul = this.menu.querySelector('ul')
 
