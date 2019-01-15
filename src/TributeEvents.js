@@ -115,20 +115,25 @@ class TributeEvents {
         }
 
         if (!instance.tribute.isActive) {
-            let keyCode = instance.getKeyCode(instance, this, event)
-
-            if (isNaN(keyCode) || !keyCode) return
-
-            let trigger = instance.tribute.triggers().find(trigger => {
-                return trigger.charCodeAt(0) === keyCode
-            })
-
-            if (typeof trigger !== 'undefined') {
-                instance.callbacks().triggerChar(event, this, trigger)
+            if (instance.tribute.autoCompleteMode) {
+                instance.callbacks().triggerChar(event, this, '')
+            } else {
+                let keyCode = instance.getKeyCode(instance, this, event)
+    
+                if (isNaN(keyCode) || !keyCode) return
+    
+                let trigger = instance.tribute.triggers().find(trigger => {
+                    return trigger.charCodeAt(0) === keyCode
+                })
+    
+                if (typeof trigger !== 'undefined') {
+                    instance.callbacks().triggerChar(event, this, trigger)
+                }
             }
         }
 
-        if (instance.tribute.current.trigger && instance.commandEvent === false
+        if ((instance.tribute.current.trigger || instance.tribute.autoCompleteMode)
+             && instance.commandEvent === false
             || instance.tribute.isActive && event.keyCode === 8) {
           instance.tribute.showMenuFor(this, true)
         }
@@ -152,7 +157,7 @@ class TributeEvents {
     getKeyCode(instance, el, event) {
         let char
         let tribute = instance.tribute
-        let info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces)
+        let info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces, tribute.autoCompleteMode)
 
         if (info) {
             return info.mentionTriggerChar.charCodeAt(0)
@@ -163,7 +168,7 @@ class TributeEvents {
 
     updateSelection(el) {
         this.tribute.current.element = el
-        let info = this.tribute.range.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces)
+        let info = this.tribute.range.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autoCompleteMode)
 
         if (info) {
             this.tribute.current.selectedPath = info.mentionSelectedPath
@@ -183,6 +188,7 @@ class TributeEvents {
                 })
 
                 tribute.current.collection = collectionItem
+
                 if (tribute.inputEvent) tribute.showMenuFor(el, true)
             },
             enter: (e, el) => {

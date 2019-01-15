@@ -22,7 +22,7 @@ class TributeRange {
         let context = this.tribute.current,
             coordinates
 
-        let info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces)
+        let info = this.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autoCompleteMode)
 
         if (typeof info !== 'undefined') {
 
@@ -114,7 +114,7 @@ class TributeRange {
 
     replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
         let context = this.tribute.current
-        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces)
+        let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces, this.tribute.autoCompleteMode)
 
         // Create the event
         let replaceEvent = new CustomEvent('tribute-replaced', {
@@ -143,8 +143,9 @@ class TributeRange {
                     ? this.tribute.replaceTextSuffix
                     : '\xA0'
                 text += textSuffix
+
                 this.pasteHtml(text, info.mentionPosition,
-                    info.mentionPosition + info.mentionText.length + 1)
+                    info.mentionPosition + info.mentionText.length + !this.tribute.autoCompleteMode)
             }
 
             context.element.dispatchEvent(replaceEvent)
@@ -259,7 +260,7 @@ class TributeRange {
         return text
     }
 
-    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces) {
+    getTriggerInfo(menuAlreadyActive, hasTrailingSpace, requireLeadingSpace, allowSpaces, isAutocomplete) {
         let ctx = this.tribute.current
         let selected, path, offset
 
@@ -276,6 +277,19 @@ class TributeRange {
         }
 
         let effectiveRange = this.getTextPrecedingCurrentSelection()
+        let effectiveSplit = effectiveRange.split(' ');
+        let splitWorldsCount = effectiveSplit.length - 1;
+        let mentionText = effectiveSplit[splitWorldsCount].trim();
+
+        if (isAutocomplete) {
+            return {
+                mentionPosition: effectiveRange.length - mentionText.length,
+                mentionText: mentionText,
+                mentionSelectedElement: selected,
+                mentionSelectedPath: path,
+                mentionSelectedOffset: offset
+            }
+        }
 
         if (effectiveRange !== undefined && effectiveRange !== null) {
             let mostRecentTriggerCharPos = -1
