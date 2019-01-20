@@ -23,6 +23,7 @@ class Tribute {
         replaceTextSuffix = null,
         positionMenu = true,
         spaceSelectsMatch = false,
+        categorize = null
     }) {
         this.autoCompleteMode = autoCompleteMode
         this.menuSelected = 0
@@ -75,7 +76,9 @@ class Tribute {
                 // array of objects or a function returning an array of objects
                 values: values,
 
-                requireLeadingSpace: requireLeadingSpace
+                requireLeadingSpace: requireLeadingSpace,
+
+                categorize: categorize
             }]
         }
         else if (collection) {
@@ -97,7 +100,8 @@ class Tribute {
                     lookup: item.lookup || lookup,
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
-                    requireLeadingSpace: item.requireLeadingSpace
+                    requireLeadingSpace: item.requireLeadingSpace,
+                    categorize: item.categorize || categorize
                 }
             })
         }
@@ -249,18 +253,48 @@ class Tribute {
 
             ul.innerHTML = ''
 
+            if (this.current.collection.categorize) {
+                let categorizedItems = {};
+                items.forEach(item => {
+                    let type = item.original.type || 'unsorted!'
+                    if (!categorizedItems.hasOwnProperty(type)) {
+                        categorizedItems[type] = []
+                    }
+                    categorizedItems[type].push(item)
+                })
+
+                items = []
+
+                for (let property in categorizedItems) {
+                    let category = this.current.collection.categorize.find(item => item.type === property)
+                    if (category) {
+                        if ((categorizedItems[category.type] || []).length) {
+                            items = [...items, { isHeader: true, template: category.header, class: category.class }, ...categorizedItems[category.type]]
+                        }
+                    }
+                }
+
+                this.current.filteredItems = items
+            }
             items.forEach((item, index) => {
                 let li = this.range.getDocument().createElement('li')
-                li.setAttribute('data-index', index)
-                li.addEventListener('mouseenter', (e) => {
-                  let li = e.target;
-                  let index = li.getAttribute('data-index')
-                  this.events.setActiveLi(index)
-                })
-                if (this.menuSelected === index) {
-                    li.className = this.current.collection.selectClass
+                if (item.isHeader) {
+                    li.classList.add('category-heading')
+                    if (item.class)
+                        li.classList.add(item.class)
+                    li.innerHTML = item.template || ''
+                } else {
+                    li.setAttribute('data-index', index)
+                    li.addEventListener('mouseenter', (e) => {
+                      let li = e.target;
+                      let index = li.getAttribute('data-index')
+                      this.events.setActiveLi(index)
+                    })
+                    if (this.menuSelected === index) {
+                        li.className = this.current.collection.selectClass
+                    }
+                    li.innerHTML = this.current.collection.menuItemTemplate(item)
                 }
-                li.innerHTML = this.current.collection.menuItemTemplate(item)
                 ul.appendChild(li)
             })
         }
@@ -348,7 +382,7 @@ class Tribute {
 
     selectItemAtIndex(index, originalEvent) {
         index = parseInt(index)
-        if (typeof index !== 'number') return
+        if (typeof index !== 'number' || isNaN(index)) return
         let item = this.current.filteredItems[index]
         let content = this.current.collection.selectTemplate(item)
         if (content !== null) this.replaceText(content, originalEvent, item)
