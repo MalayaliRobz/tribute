@@ -281,7 +281,7 @@ class TributeEvents {
         let menuFullHeight = this.getFullHeight(this.tribute.menu),
             liHeight = this.getFullHeight(lis[0])
 
-        if (index) this.tribute.menuSelected = index;
+        if (index) this.tribute.menuSelected = parseInt(index);
 
         for (let i = 0; i < length; i++) {
             let li = lis[i]
@@ -296,9 +296,9 @@ class TributeEvents {
                   this.tribute.menu.scrollTop -= liHeight
                 }
 
-                li.className = this.tribute.current.collection.selectClass
+                li.classList.add(this.tribute.current.collection.selectClass);
             } else {
-                li.className = ''
+                li.classList.remove(this.tribute.current.collection.selectClass);
             }
         }
     }
