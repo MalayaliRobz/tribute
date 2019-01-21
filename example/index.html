@@ -47,7 +47,6 @@
       <div class="large-8 columns">
         <div class="callout large">
           <h5>Tribute Autocomplete on <code>contenteditable</code> element:</h5>
-          <a id="activateAutocompleteInput">trigger mentions</a>
           <p id="testAutocomplete" class="tribute-demo-input" placeholder="Enter some text here"></p>
         </div>
       </div>
@@ -90,13 +89,13 @@
     <script src="../dist/tribute.js"></script>
     <script>
       //example for tribute Autocomplete
-        var tributeAutoComplete = new Tribute({
+      var tributeAutoComplete = new Tribute({
           autoCompleteMode: true,
           collection: [{
             // The function that gets call on select that retuns the content to insert
             selectTemplate: function (item) {
-              if (this.range.isContentEditable(this.current.element)) {
-                return `<a href="http://zurb.com" title=${item.original.email} > ${item.original.value}</a>`;
+              if (item.original.type === 'fn') {
+                return item.original.value;
               }
 
               return item.original.value;
@@ -104,56 +103,17 @@
 
             // the array of objects
             values: [
-              { key: 'Alabama', value: 'Alabama', email: 'Alabama@tribute.com' },
-              { key: 'Alaska', value: 'Alaska', email: 'Alaska@tribute.com' },
-              { key: 'Arizona', value: 'Arizona', email: 'Arizona@tribute.com' },
-              { key: 'Arkansas', value: 'Arkansas', email: 'Arkansas@tribute.com' },
-              { key: 'California', value: 'California', email: 'California@tribute.com' },
-              { key: 'Colorado', value: 'Colorado', email: 'Colorado@tribute.com' },
-              { key: 'Connecticut', value: 'Connecticut', email: 'Connecticut@tribute.com' },
-              { key: 'Delaware', value: 'Delaware', email: 'Delaware@tribute.com' },
-              { key: 'Florida', value: 'Florida', email: 'Florida@tribute.com' },
-              { key: 'Georgia', value: 'Georgia', email: 'Georgia@tribute.com' },
-              { key: 'Hawaii', value: 'Hawaii', email: 'Hawaii@tribute.com' },
-              { key: 'Idaho', value: 'Idaho', email: 'Idaho@tribute.com' },
-              { key: 'Illinois', value: 'Illinois', email: 'Illinois@tribute.com' },
-              { key: 'Indiana', value: 'Indiana', email: 'Indiana@tribute.com' },
-              { key: 'Iowa', value: 'Iowa', email: 'Iowa@tribute.com' },
-              { key: 'Kansas', value: 'Kansas', email: 'Kansas@tribute.com' },
-              { key: 'Kentucky', value: 'Kentucky', email: 'Kentucky@tribute.com' },
-              { key: 'Louisiana', value: 'Louisiana', email: 'Louisiana@tribute.com' },
-              { key: 'Maine', value: 'Maine', email: 'Maine@tribute.com' },
-              { key: 'Maryland', value: 'Maryland', email: 'Maryland@tribute.com' },
-              { key: 'Massachusetts', value: 'Massachusetts', email: 'Massachusetts@tribute.com' },
-              { key: 'Michigan', value: 'Michigan', email: 'Michigan@tribute.com' },
-              { key: 'Minnesota', value: 'Minnesota', email: 'Minnesota@tribute.com' },
-              { key: 'Mississippi', value: 'Mississippi', email: 'Mississippi@tribute.com' },
-              { key: 'Missouri', value: 'Missouri', email: 'Missouri@tribute.com' },
-              { key: 'Montana', value: 'Montana', email: 'Montana@tribute.com' },
-              { key: 'Nebraska', value: 'Nebraska', email: 'Nebraska@tribute.com' },
-              { key: 'Nevada', value: 'Nevada', email: 'Nevada@tribute.com' },
-              { key: 'New Hampshire', value: 'New Hampshire', email: 'New Hampshire@tribute.com' },
-              { key: 'New Jersey', value: 'New Jersey', email: 'New Jersey@tribute.com' },
-              { key: 'New Mexico', value: 'New Mexico', email: 'New Mexico@tribute.com' },
-              { key: 'New York', value: 'New York', email: 'New York@tribute.com' },
-              { key: 'North Carolina', value: 'North Carolina', email: 'North Carolina@tribute.com' },
-              { key: 'North Dakota', value: 'North Dakota', email: 'North Dakota@tribute.com' },
-              { key: 'Ohio', value: 'Ohio', email: 'Ohio@tribute.com' },
-              { key: 'Oklahoma', value: 'Oklahoma', email: 'Oklahoma@tribute.com' },
-              { key: 'Oregon', value: 'Oregon', email: 'Oregon@tribute.com' },
-              { key: 'Pennsylvania', value: 'Pennsylvania', email: 'Pennsylvania@tribute.com' },
-              { key: 'Rhode Island', value: 'Rhode Island', email: 'Rhode Island@tribute.com' },
-              { key: 'South Carolina', value: 'South Carolina', email: 'South Carolina@tribute.com' },
-              { key: 'South Dakota', value: 'South Dakota', email: 'South Dakota@tribute.com' },
-              { key: 'Tennessee', value: 'Tennessee', email: 'Tennessee@tribute.com' },
-              { key: 'Texas', value: 'Texas', email: 'Texas@tribute.com' },
-              { key: 'Utah', value: 'Utah', email: 'Utah@tribute.com' },
-              { key: 'Vermont', value: 'Vermont', email: 'Vermont@tribute.com' },
-              { key: 'Virginia', value: 'Virginia', email: 'Virginia@tribute.com' },
-              { key: 'Washington', value: 'Washington', email: 'Washington@tribute.com' },
-              { key: 'West Virginia', value: 'West Virginia', email: 'West Virginia@tribute.com' },
-              { key: 'Wisconsin', value: 'Wisconsin', email: 'Wisconsin@tribute.com' },
-              { key: 'Wyoming', value: 'Wyoming', email: 'Wyoming@tribute.com'  }
+              { key: 'Min', value: 'Min(', type: 'fn', desc: 'Return the minimum value' },
+              { key: 'Max', value: 'Max(', type: 'fn', desc: 'Return the maximum value' },
+              { key: 'field1', value: 'field1', type: 'field', desc: 'Return the maximum value' },
+              { key: 'field2', value: 'field2', type: 'field', desc: 'Return the maximum value' },
+              { key: 'test', value: 'test', type: 'test', desc: 'Return the maximum value' }
+            ],
+
+            categorize: [
+              { type: 'fn', header: '<h4> Functions </h4>' },
+              { type: 'field', header: '<h4> Fields </h4>' },
+              { type: 'test', class:'testing' },
             ]
           }]
         });
@@ -162,6 +122,7 @@
 
       // example of alternative callback
       var tribute = new Tribute({
+        autoCompleteMode: true,
         menuContainer: document.getElementById('content'),
         values: [
           {key: 'Jordan Humphreys', value: 'Jordan Humphreys', email: 'getstarted@zurb.com'},
