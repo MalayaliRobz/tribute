@@ -69,7 +69,7 @@ gulp.task('openbrowser', ['build'], function() {
 
 gulp.task('watch', function() {
     gulp.watch(sourcePaths.styles, ['sass']);
-    gulp.watch(sourcePaths.src, ['bundler']);
+    gulp.watch(sourcePaths.src, ['bundler', 'uglify']);
 });
 
 gulp.task('build', ['sass', 'uglify']);
