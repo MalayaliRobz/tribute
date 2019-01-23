@@ -114,6 +114,7 @@ class TributeRange {
 
     replaceTriggerText(text, requireLeadingSpace, hasTrailingSpace, originalEvent, item) {
         let context = this.tribute.current
+
         let info = this.getTriggerInfo(true, hasTrailingSpace, requireLeadingSpace, this.tribute.allowSpaces, this.tribute.autoCompleteMode)
 
         // Create the event

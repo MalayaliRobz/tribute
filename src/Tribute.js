@@ -80,6 +80,7 @@ class Tribute {
                 requireLeadingSpace: requireLeadingSpace,
 
                 searchOpts: searchOpts,
+
                 categorize: categorize
             }]
         }
