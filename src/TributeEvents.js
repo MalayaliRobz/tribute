@@ -273,7 +273,7 @@ class TributeEvents {
         }
     }
 
-    setActiveLi(index) {
+    setActiveLi(index, scrollToPos=true) {
         let lis = this.tribute.menu.querySelectorAll('li'),
             length = lis.length >>> 0
 
@@ -290,10 +290,12 @@ class TributeEvents {
                 let scrollTop = this.tribute.menu.scrollTop
                 let totalScroll = scrollTop + menuFullHeight
 
-                if (offset > totalScroll) {
-                  this.tribute.menu.scrollTop += liHeight
-                } else if (offset < totalScroll) {
-                  this.tribute.menu.scrollTop -= liHeight
+                if (scrollToPos) {
+                    if (offset > totalScroll) {
+                      this.tribute.menu.scrollTop += liHeight
+                    } else if (offset < totalScroll) {
+                      this.tribute.menu.scrollTop -= liHeight
+                    }
                 }
 
                 li.classList.add(this.tribute.current.collection.selectClass);
