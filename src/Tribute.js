@@ -23,8 +23,7 @@ class Tribute {
         replaceTextSuffix = null,
         positionMenu = true,
         spaceSelectsMatch = false,
-        searchOpts = {},
-        categorize = null
+        searchOpts = {}
     }) {
         this.autoCompleteMode = autoCompleteMode
         this.menuSelected = 0
@@ -79,9 +78,7 @@ class Tribute {
 
                 requireLeadingSpace: requireLeadingSpace,
 
-                searchOpts: searchOpts,
-
-                categorize: categorize
+                searchOpts: searchOpts
             }]
         }
         else if (collection) {
@@ -104,8 +101,7 @@ class Tribute {
                     fillAttr: item.fillAttr || fillAttr,
                     values: item.values,
                     requireLeadingSpace: item.requireLeadingSpace,
-                    searchOpts: item.searchOpts || searchOpts,
-                    categorize: item.categorize || categorize
+                    searchOpts: item.searchOpts || searchOpts
                 }
             })
         }
@@ -257,48 +253,20 @@ class Tribute {
 
             ul.innerHTML = ''
 
-            if (this.current.collection.categorize) {
-                let categorizedItems = {};
-                items.forEach(item => {
-                    let type = item.original.type || 'unsorted!'
-                    if (!categorizedItems.hasOwnProperty(type)) {
-                        categorizedItems[type] = []
-                    }
-                    categorizedItems[type].push(item)
-                })
-
-                items = []
-
-                for (let property in categorizedItems) {
-                    let category = this.current.collection.categorize.find(item => item.type === property)
-                    if (category) {
-                        if ((categorizedItems[category.type] || []).length) {
-                            items = [...items, { isHeader: true, template: category.header, class: category.class }, ...categorizedItems[category.type]]
-                        }
-                    }
-                }
-
-                this.current.filteredItems = items
-            }
             items.forEach((item, index) => {
                 let li = this.range.getDocument().createElement('li')
-                if (item.isHeader) {
-                    li.classList.add('category-heading')
-                    if (item.class)
-                        li.classList.add(item.class)
-                    li.innerHTML = item.template || ''
-                } else {
-                    li.setAttribute('data-index', index)
-                    li.addEventListener('mouseenter', (e) => {
-                      let li = e.target;
-                      let index = li.getAttribute('data-index')
-                      this.events.setActiveLi(index, false)
-                    })
-                    if (this.menuSelected === index) {
-                        li.className = this.current.collection.selectClass
-                    }
-                    li.innerHTML = this.current.collection.menuItemTemplate(item)
+
+                li.setAttribute('data-index', index)
+                li.addEventListener('mouseenter', (e) => {
+                    let li = e.target;
+                    let index = li.getAttribute('data-index')
+                    this.events.setActiveLi(index, false)
+                })
+                if (this.menuSelected === index) {
+                    li.className = this.current.collection.selectClass
                 }
+                li.innerHTML = this.current.collection.menuItemTemplate(item)
+
                 ul.appendChild(li)
             })
         }
