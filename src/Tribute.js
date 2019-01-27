@@ -260,8 +260,9 @@ class Tribute {
                 li.addEventListener('mouseenter', (e) => {
                     let li = e.target;
                     let index = li.getAttribute('data-index')
-                    console.log(e);
-                    this.events.setActiveLi(index)
+                    if (e.movementX !==0 && e.movementY !== 0) {
+                        this.events.setActiveLi(index)
+                    }
                 })
                 if (this.menuSelected === index) {
                     li.className = this.current.collection.selectClass
