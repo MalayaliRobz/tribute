@@ -241,7 +241,6 @@ class TributeEvents {
                     } else if (selected === 0) {
                       this.tribute.menuSelected = count - 1
                       this.setActiveLi()
-                      this.tribute.menu.scrollTop = this.tribute.menu.scrollHeight
                     }
                 }
             },
@@ -259,7 +258,6 @@ class TributeEvents {
                     } else if (count === selected) {
                         this.tribute.menuSelected = 0
                         this.setActiveLi()
-                        this.tribute.menu.scrollTop = 0
                     }
                 }
             },
@@ -278,23 +276,26 @@ class TributeEvents {
             length = lis.length >>> 0
 
         if (index) this.tribute.menuSelected = parseInt(index);
-
+        
         for (let i = 0; i < length; i++) {
             let li = lis[i]
             if (i === this.tribute.menuSelected) {
+                console.log(this.tribute.menuSelected);
+                li.classList.add(this.tribute.current.collection.selectClass);
+
                 let liClientRect = li.getBoundingClientRect();
                 let menuClientRect = this.tribute.menu.getBoundingClientRect();
 
                 if (liClientRect.bottom > menuClientRect.bottom) {
                     let difference = liClientRect.bottom - menuClientRect.bottom;
-                    this.tribute.menu.scrollBy(0, difference)
+                    this.tribute.menu.scrollTop += difference
+                    // this.tribute.menu.scrollBy(0, difference)
                 }
                 if (liClientRect.top < menuClientRect.top) {
                     let difference = menuClientRect.top - liClientRect.top;
-                    this.tribute.menu.scrollBy(0, -difference)
+                    this.tribute.menu.scrollTop -= difference
+                    // this.tribute.menu.scrollBy(0, -difference)
                 }
-
-                li.classList.add(this.tribute.current.collection.selectClass);
             } else {
                 li.classList.remove(this.tribute.current.collection.selectClass);
             }
