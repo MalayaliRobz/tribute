@@ -286,16 +286,16 @@ class TributeEvents {
         for (let i = 0; i < length; i++) {
             let li = lis[i]
             if (i === this.tribute.menuSelected) {
-                let offset = liHeight * (i+1)
-                let scrollTop = this.tribute.menu.scrollTop
-                let totalScroll = scrollTop + menuFullHeight
+                let liClientRect = li.getBoundingClientRect();
+                let menuClientRect = this.tribute.menu.getBoundingClientRect();
 
-                if (scrollToPos) {
-                    if (offset > totalScroll) {
-                      this.tribute.menu.scrollTop += liHeight
-                    } else if (offset < totalScroll) {
-                      this.tribute.menu.scrollTop -= liHeight
-                    }
+                if (liClientRect.bottom > menuClientRect.bottom) {
+                    let difference = liClientRect.bottom - menuClientRect.bottom;
+                    this.tribute.menu.scrollBy(0, difference)
+                }
+                if (liClientRect.top < menuClientRect.top) {
+                    let difference = menuClientRect.top - liClientRect.top;
+                    this.tribute.menu.scrollBy(0, -difference)
                 }
 
                 li.classList.add(this.tribute.current.collection.selectClass);
