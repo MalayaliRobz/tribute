@@ -273,13 +273,9 @@ class TributeEvents {
         }
     }
 
-    setActiveLi(index, scrollToPos=true) {
+    setActiveLi(index) {
         let lis = this.tribute.menu.querySelectorAll('li'),
             length = lis.length >>> 0
-
-        // get heights
-        let menuFullHeight = this.getFullHeight(this.tribute.menu),
-            liHeight = this.getFullHeight(lis[0])
 
         if (index) this.tribute.menuSelected = parseInt(index);
 
@@ -303,17 +299,6 @@ class TributeEvents {
                 li.classList.remove(this.tribute.current.collection.selectClass);
             }
         }
-    }
-
-    getFullHeight(elem, includeMargin) {
-      let height = elem.getBoundingClientRect().height
-
-      if (includeMargin) {
-        let style = elem.currentStyle || window.getComputedStyle(elem)
-        return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom)
-      }
-
-      return height
     }
 
 }
