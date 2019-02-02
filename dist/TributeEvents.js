@@ -97,21 +97,32 @@ var TributeEvents = function () {
 
             if (event.keyCode === 27) return;
 
+            if (!instance.tribute.allowSpaces && instance.tribute.hasTrailingSpace) {
+                instance.tribute.hasTrailingSpace = false;
+                instance.commandEvent = true;
+                instance.callbacks()["space"](event, this);
+                return;
+            }
+
             if (!instance.tribute.isActive) {
-                var keyCode = instance.getKeyCode(instance, this, event);
+                if (instance.tribute.autoCompleteMode) {
+                    instance.callbacks().triggerChar(event, this, '');
+                } else {
+                    var keyCode = instance.getKeyCode(instance, this, event);
 
-                if (isNaN(keyCode) || !keyCode) return;
+                    if (isNaN(keyCode) || !keyCode) return;
 
-                var trigger = instance.tribute.triggers().find(function (trigger) {
-                    return trigger.charCodeAt(0) === keyCode;
-                });
+                    var trigger = instance.tribute.triggers().find(function (trigger) {
+                        return trigger.charCodeAt(0) === keyCode;
+                    });
 
-                if (typeof trigger !== 'undefined') {
-                    instance.callbacks().triggerChar(event, this, trigger);
+                    if (typeof trigger !== 'undefined') {
+                        instance.callbacks().triggerChar(event, this, trigger);
+                    }
                 }
             }
 
-            if (instance.tribute.current.trigger && instance.commandEvent === false || instance.tribute.isActive && event.keyCode === 8) {
+            if ((instance.tribute.current.trigger || instance.tribute.autoCompleteMode) && instance.commandEvent === false || instance.tribute.isActive && event.keyCode === 8) {
                 instance.tribute.showMenuFor(this, true);
             }
         }
@@ -136,7 +147,7 @@ var TributeEvents = function () {
         value: function getKeyCode(instance, el, event) {
             var char = void 0;
             var tribute = instance.tribute;
-            var info = tribute.range.getTriggerInfo(false, false, true, tribute.allowSpaces);
+            var info = tribute.range.getTriggerInfo(false, tribute.hasTrailingSpace, true, tribute.allowSpaces, tribute.autoCompleteMode);
 
             if (info) {
                 return info.mentionTriggerChar.charCodeAt(0);
@@ -148,7 +159,7 @@ var TributeEvents = function () {
         key: 'updateSelection',
         value: function updateSelection(el) {
             this.tribute.current.element = el;
-            var info = this.tribute.range.getTriggerInfo(false, false, true, this.tribute.allowSpaces);
+            var info = this.tribute.range.getTriggerInfo(false, this.tribute.hasTrailingSpace, true, this.tribute.allowSpaces, this.tribute.autoCompleteMode);
 
             if (info) {
                 this.tribute.current.selectedPath = info.mentionSelectedPath;
@@ -171,6 +182,7 @@ var TributeEvents = function () {
                     });
 
                     tribute.current.collection = collectionItem;
+
                     if (tribute.inputEvent) tribute.showMenuFor(el, true);
                 },
                 enter: function enter(e, el) {
@@ -196,6 +208,19 @@ var TributeEvents = function () {
                     // choose first match
                     _this.callbacks().enter(e, el);
                 },
+                space: function space(e, el) {
+                    if (_this.tribute.isActive) {
+                        if (_this.tribute.spaceSelectsMatch) {
+                            _this.callbacks().enter(e, el);
+                        } else if (!_this.tribute.allowSpaces) {
+                            e.stopPropagation();
+                            setTimeout(function () {
+                                _this.tribute.hideMenu();
+                                _this.tribute.isActive = false;
+                            }, 0);
+                        }
+                    }
+                },
                 up: function up(e, el) {
                     // navigate up ul
                     if (_this.tribute.isActive) {
@@ -210,7 +235,6 @@ var TributeEvents = function () {
                         } else if (selected === 0) {
                             _this.tribute.menuSelected = count - 1;
                             _this.setActiveLi();
-                            _this.tribute.menu.scrollTop = _this.tribute.menu.scrollHeight;
                         }
                     }
                 },
@@ -228,7 +252,6 @@ var TributeEvents = function () {
                         } else if (count === selected) {
                             _this.tribute.menuSelected = 0;
                             _this.setActiveLi();
-                            _this.tribute.menu.scrollTop = 0;
                         }
                     }
                 },
@@ -247,42 +270,28 @@ var TributeEvents = function () {
             var lis = this.tribute.menu.querySelectorAll('li'),
                 length = lis.length >>> 0;
 
-            // get heights
-            var menuFullHeight = this.getFullHeight(this.tribute.menu),
-                liHeight = this.getFullHeight(lis[0]);
-
-            if (index) this.tribute.menuSelected = index;
+            if (index) this.tribute.menuSelected = parseInt(index);
 
             for (var i = 0; i < length; i++) {
                 var li = lis[i];
                 if (i === this.tribute.menuSelected) {
-                    var offset = liHeight * (i + 1);
-                    var scrollTop = this.tribute.menu.scrollTop;
-                    var totalScroll = scrollTop + menuFullHeight;
+                    li.classList.add(this.tribute.current.collection.selectClass);
 
-                    if (offset > totalScroll) {
-                        this.tribute.menu.scrollTop += liHeight;
-                    } else if (offset < totalScroll) {
-                        this.tribute.menu.scrollTop -= liHeight;
+                    var liClientRect = li.getBoundingClientRect();
+                    var menuClientRect = this.tribute.menu.getBoundingClientRect();
+
+                    if (liClientRect.bottom > menuClientRect.bottom) {
+                        var difference = liClientRect.bottom - menuClientRect.bottom;
+                        this.tribute.menu.scrollBy(0, difference);
                     }
-
-                    li.className = this.tribute.current.collection.selectClass;
+                    if (liClientRect.top < menuClientRect.top) {
+                        var _difference = menuClientRect.top - liClientRect.top;
+                        this.tribute.menu.scrollBy(0, -_difference);
+                    }
                 } else {
-                    li.className = '';
+                    li.classList.remove(this.tribute.current.collection.selectClass);
                 }
             }
-        }
-    }, {
-        key: 'getFullHeight',
-        value: function getFullHeight(elem, includeMargin) {
-            var height = elem.getBoundingClientRect().height;
-
-            if (includeMargin) {
-                var style = elem.currentStyle || window.getComputedStyle(elem);
-                return height + parseFloat(style.marginTop) + parseFloat(style.marginBottom);
-            }
-
-            return height;
         }
     }], [{
         key: 'keys',
@@ -299,6 +308,9 @@ var TributeEvents = function () {
             }, {
                 key: 27,
                 value: 'ESCAPE'
+            }, {
+                key: 32,
+                value: 'SPACE'
             }, {
                 key: 38,
                 value: 'UP'

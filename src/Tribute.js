@@ -38,7 +38,8 @@ class Tribute {
         this.spaceSelectsMatch = spaceSelectsMatch;
 
         if (this.autoCompleteMode) {
-            trigger= ''
+            trigger = ''
+            allowSpaces = false
         }
 
         if (values) {

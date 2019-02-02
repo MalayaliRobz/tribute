@@ -1,22 +1,23 @@
 {
-  "name": "tribute",
-  "description": "Native ES6 @mentions",
-  "version": "3.5.1",
+  "name": "tribute-autocomplete",
+  "description": "Native ES6 autocomlpete",
+  "version": "1.0.0",
   "main": [
     "dist/tribute.js",
     "dist/tribute.css"
   ],
   "authors": [
-    "Jordan Humphreys <jordan@zurb.com>"
+    "Robin Philip Thomas"
   ],
   "license": "MIT",
   "keywords": [
     "mentions",
+    "typeahead",
     "autocomplete",
     "fuzzy",
     "search"
   ],
-  "homepage": "https://github.com/zurb/tribute",
+  "homepage": "https://github.com/MalayaliRobz/tribute-autocomplete",
   "moduleType": [],
   "ignore": [
     "**/.*",
