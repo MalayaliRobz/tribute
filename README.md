@@ -13,14 +13,14 @@ There are a few ways to install Tribute; [Bower](http://bower.io/), as an [NPM M
 Bower is a great way to manage your JS dependencies. You can install Tribute by running the following command:
 
 ```shell
-bower install tribute-autocomplete
+bower install tributejs-autocomplete
 ```
 
 You can then link to Tribute autocomplete in your code with the following markup:
 
 ```html
-<link rel="stylesheet" href="bower_components/tribute-autocomplete/dist/tribute.css" />
-<script src="bower_components/tribute-autocomplete/dist/tribute.js"></script>
+<link rel="stylesheet" href="bower_components/tributejs-autocomplete/dist/tribute.css" />
+<script src="bower_components/tributejs-autocomplete/dist/tribute.js"></script>
 ```
 
 ### NPM Module
