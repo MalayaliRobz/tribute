@@ -1,3 +1,6 @@
+> **Update!!** this repo has been merged to the parent repo [https://github.com/zurb/tribute](https://github.com/zurb/tribute).
+you can your normal Tributejs with flag `autocompleteMode:true` to make it function as an autocomplete.
+
 # Tribute autocomplete
 This is a fork of [tributejs](https://github.com/zurb/tribute) modified to work as a autocomplete-typehead. Also works with normal @mentions tribute configs also.
 
